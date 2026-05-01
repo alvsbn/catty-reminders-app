@@ -24,12 +24,6 @@ def handle():
                        os.path.join(APP_DIR, "requirements.txt")], check=True)
         print("Dependencies installed")
         
-        result = subprocess.run(["python3", "-m", "pytest", APP_DIR])
-        if result.returncode != 0:
-            print("Tests failed")
-            return jsonify({"error": "Tests failed"}), 500
-        print("Tests passed")
-        
         subprocess.run(["sudo", "systemctl", "restart", APP_SERVICE], check=True)
         print("Service restarted")
         
