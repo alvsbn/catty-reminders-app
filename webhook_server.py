@@ -8,6 +8,7 @@ app = Flask(__name__)
 PORT = 8080
 APP_DIR = "/home/sabina/catty-reminders-app"
 APP_SERVICE = "catty-app"
+ENV_FILE = "/home/sabina/catty-reminders-app/.env"
 
 @app.route('/', methods=['GET', 'POST'])
 def handle():
@@ -20,9 +21,11 @@ def handle():
         subprocess.run(["git", "-C", APP_DIR, "pull"], check=True)
         print("Code updated")
         
-        subprocess.run(["pip3", "install", "--break-system-packages", "-r", 
-                       os.path.join(APP_DIR, "requirements.txt")], check=True)
-        print("Dependencies installed")
+        sha = subprocess.check_output(["git", "-C", APP_DIR, "rev-parse", "HEAD"]).decode().strip()
+        
+        with open(ENV_FILE, "w") as f:
+            f.write(f"DEPLOY_REF={sha}")
+        print(f"DEPLOY_REF written: {sha}")
         
         subprocess.run(["sudo", "systemctl", "restart", APP_SERVICE], check=True)
         print("Service restarted")
