@@ -16,16 +16,20 @@ def handle():
         return jsonify({"message": "Webhook handler running"}), 200
     
     if request.headers.get('X-GitHub-Event') == 'push':
+        data = request.json
+        commit_sha = data.get('after') if data else None
+        
+        if not commit_sha or commit_sha == '0000000000000000000000000000000000000000':
+            return jsonify({"message": "No valid SHA"}), 200
+            
         print("Starting deployment...")
         
         subprocess.run(["git", "-C", APP_DIR, "pull"], check=True)
         print("Code updated")
         
-        sha = subprocess.check_output(["git", "-C", APP_DIR, "rev-parse", "HEAD"]).decode().strip()
-        
         with open(ENV_FILE, "w") as f:
-            f.write(f"DEPLOY_REF={sha}")
-        print(f"DEPLOY_REF written: {sha}")
+            f.write(f"DEPLOY_REF={commit_sha}")
+        print(f"DEPLOY_REF written: {commit_sha}")
         
         subprocess.run(["sudo", "systemctl", "restart", APP_SERVICE], check=True)
         print("Service restarted")
