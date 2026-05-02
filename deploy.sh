@@ -18,7 +18,7 @@ CURRENT_COMMIT=$(git rev-parse HEAD)
 
 /home/sabina/catty-reminders-app/.venv/bin/pip install -r requirements.txt
 
-echo "DEPLOY_REF=${CURRENT_COMMIT}" > .deploy_env
+echo "DEPLOY_REF=${CURRENT_COMMIT}" > .env
 
 sudo systemctl restart catty-app.service
 sleep 2
