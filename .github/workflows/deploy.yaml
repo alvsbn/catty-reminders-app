@@ -11,8 +11,14 @@ jobs:
     steps:
       - uses: appleboy/ssh-action@v1
         with:
-          host: course.prafdin.ru
-          port: 3166
-          username: sabina
+          host: ${{ secrets.SSH_HOST }}
+          port: ${{ secrets.SSH_PORT }}
+          username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: /home/sabina/deploy.sh ${{ github.sha }}
+          script: |
+            set -e
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u alvsbn --password-stdin
+            docker pull ghcr.io/alvsbn/catty-reminders-app:${{ github.sha }}
+            docker stop catty-app || true
+            docker rm catty-app || true
+            docker run -d --name catty-app --restart unless-stopped -p 8181:8181 ghcr.io/alvsbn/catty-reminders-app:${{ github.sha }}
