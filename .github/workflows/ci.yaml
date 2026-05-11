@@ -52,3 +52,5 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/alvsbn/catty-reminders-app:${{ github.sha }}
+          build-args: |
+            DEPLOY_REF=${{ github.sha }}
