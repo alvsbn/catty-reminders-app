@@ -21,3 +21,9 @@ jobs:
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u alvsbn --password-stdin
             docker compose pull
             docker compose up -d --force-recreate
+            for i in {1..30}; do
+              if curl -fsS http://127.0.0.1:8181/login > /dev/null; then
+                break
+               fi
+               sleep 5
+             done
