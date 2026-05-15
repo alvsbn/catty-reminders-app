@@ -20,4 +20,4 @@ jobs:
             cd /home/sabina/catty-reminders-app
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u alvsbn --password-stdin
             docker compose pull
-            docker compose up -d
+            docker compose up -d --force-recreate
