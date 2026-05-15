@@ -19,11 +19,14 @@ jobs:
             set -e
             cd /home/sabina/catty-reminders-app
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u alvsbn --password-stdin
+            docker compose down
             docker compose pull
-            docker compose up -d --force-recreate
+            docker compose up -d
             for i in {1..30}; do
               if curl -fsS http://127.0.0.1:8181/login > /dev/null; then
+                echo "App is ready"
                 break
                fi
+               echo "Waiting..."
                sleep 5
              done
